@@ -80,7 +80,7 @@ const App = () => {
         value={searchQuery}
         onChange={handleSearch}
       />
-      {/* Container for WeatherDisplay components */}
+          
       <div className="weather-display-container">
         {filteredLocations.length > 0 ? (
           filteredLocations.map((location, index) => (
