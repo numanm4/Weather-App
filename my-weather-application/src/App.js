@@ -1,4 +1,4 @@
-// App.js
+
 import React, { useState } from 'react';
 import WeatherDisplay from './WeatherDisplay';
 import './App.css';
@@ -58,15 +58,15 @@ const App = () => {
     { "city": "Arlington", "temperature": "28°C", "weather": "Cloudy" }
   ]);
 
-  // State for search query
+  // useState for searching locations
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Function to handle search input
+
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Filtered locations based on search query
+  // Filtering locations based on search 
   const filteredLocations = locations.filter(location =>
     location.city.toLowerCase().includes(searchQuery.toLowerCase())
   );
