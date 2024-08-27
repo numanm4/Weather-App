@@ -1,14 +1,14 @@
 import React from 'react';
 import './WeatherDisplay.css';
 
-const WeatherDisplay = ({ location }) => {
+function WeatherDisplay({ weather }) {
   return (
     <div className="weather-display">
-      <h2>{location.city}</h2>
-      <p>Weather: {location.weather}</p>
-      <p>Temperature: {location.temperature}</p>
+      <h2>Weather Details</h2>
+      <p>Temperature: {weather.temperature}°C</p>
+      <p>Wind Speed: {weather.windspeed} m/s</p>
     </div>
   );
-};
+}
 
 export default WeatherDisplay;

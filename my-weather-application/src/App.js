@@ -1,97 +1,53 @@
-
 import React, { useState } from 'react';
 import WeatherDisplay from './WeatherDisplay';
 import './App.css';
 
-
-const App = () => {
-  const [locations] = useState([
-    { "city": "New York", "temperature": "22°C", "weather": "Sunny" },
-    { "city": "Los Angeles", "temperature": "25°C", "weather": "Cloudy" },
-    { "city": "Chicago", "temperature": "15°C", "weather": "Rainy" },
-    { "city": "Houston", "temperature": "30°C", "weather": "Sunny" },
-    { "city": "Phoenix", "temperature": "35°C", "weather": "Sunny" },
-    { "city": "Philadelphia", "temperature": "20°C", "weather": "Cloudy" },
-    { "city": "San Antonio", "temperature": "28°C", "weather": "Sunny" },
-    { "city": "San Diego", "temperature": "23°C", "weather": "Sunny" },
-    { "city": "Dallas", "temperature": "30°C", "weather": "Sunny" },
-    { "city": "San Jose", "temperature": "22°C", "weather": "Cloudy" },
-    { "city": "Austin", "temperature": "28°C", "weather": "Sunny" },
-    { "city": "Jacksonville", "temperature": "27°C", "weather": "Sunny" },
-    { "city": "Fort Worth", "temperature": "29°C", "weather": "Cloudy" },
-    { "city": "Columbus", "temperature": "20°C", "weather": "Rainy" },
-    { "city": "Charlotte", "temperature": "24°C", "weather": "Cloudy" },
-    { "city": "San Francisco", "temperature": "18°C", "weather": "Cloudy" },
-    { "city": "Indianapolis", "temperature": "22°C", "weather": "Cloudy" },
-    { "city": "Seattle", "temperature": "15°C", "weather": "Rainy" },
-    { "city": "Denver", "temperature": "22°C", "weather": "Cloudy" },
-    { "city": "Washington", "temperature": "24°C", "weather": "Cloudy" },
-    { "city": "Boston", "temperature": "20°C", "weather": "Rainy" },
-    { "city": "El Paso", "temperature": "30°C", "weather": "Sunny" },
-    { "city": "Nashville", "temperature": "26°C", "weather": "Cloudy" },
-    { "city": "Detroit", "temperature": "19°C", "weather": "Cloudy" },
-    { "city": "Oklahoma City", "temperature": "28°C", "weather": "Sunny" },
-    { "city": "Portland", "temperature": "20°C", "weather": "Rainy" },
-    { "city": "Las Vegas", "temperature": "34°C", "weather": "Sunny" },
-    { "city": "Memphis", "temperature": "27°C", "weather": "Sunny" },
-    { "city": "Louisville", "temperature": "24°C", "weather": "Cloudy" },
-    { "city": "Baltimore", "temperature": "22°C", "weather": "Cloudy" },
-    { "city": "Milwaukee", "temperature": "18°C", "weather": "Cloudy" },
-    { "city": "Albuquerque", "temperature": "25°C", "weather": "Sunny" },
-    { "city": "Tucson", "temperature": "33°C", "weather": "Sunny" },
-    { "city": "Fresno", "temperature": "30°C", "weather": "Sunny" },
-    { "city": "Sacramento", "temperature": "24°C", "weather": "Cloudy" },
-    { "city": "Kansas City", "temperature": "25°C", "weather": "Cloudy" },
-    { "city": "Long Beach", "temperature": "24°C", "weather": "Cloudy" },
-    { "city": "Mesa", "temperature": "32°C", "weather": "Sunny" },
-    { "city": "Atlanta", "temperature": "26°C", "weather": "Cloudy" },
-    { "city": "Colorado Springs", "temperature": "20°C", "weather": "Cloudy" },
-    { "city": "Virginia Beach", "temperature": "25°C", "weather": "Cloudy" },
-    { "city": "Raleigh", "temperature": "24°C", "weather": "Cloudy" },
-    { "city": "Omaha", "temperature": "23°C", "weather": "Cloudy" },
-    { "city": "Miami", "temperature": "30°C", "weather": "Sunny" },
-    { "city": "Oakland", "temperature": "22°C", "weather": "Cloudy" },
-    { "city": "Minneapolis", "temperature": "20°C", "weather": "Cloudy" },
-    { "city": "Tulsa", "temperature": "27°C", "weather": "Cloudy" },
-    { "city": "Wichita", "temperature": "25°C", "weather": "Sunny" },
-    { "city": "New Orleans", "temperature": "29°C", "weather": "Sunny" },
-    { "city": "Arlington", "temperature": "28°C", "weather": "Cloudy" }
-  ]);
-
-  // useState for searching locations
-  const [searchQuery, setSearchQuery] = useState('');
-
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+function App() {
+  const [city, setCity] = useState('');
+  const [weatherData, setWeatherData] = useState(null);
+  
+  const fetchWeather = async (latitude, longitude) => {
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
+    const data = await response.json();
+    setWeatherData(data.current_weather);
   };
 
-  // Filtering locations based on search 
-  const filteredLocations = locations.filter(location =>
-    location.city.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const fetchCoordinates = async () => {
+    const apiKey = 'c71a154bf14f4d20a37324749f120dd8'; 
+    const response = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${city}&key=${apiKey}`);
+    const data = await response.json();
+    console.log(data);
+  
+    if (data.results.length > 0) {
+      const { lat, lng } = data.results[0].geometry;
+      fetchWeather(lat, lng);
+    } else {
+      alert("City not found!");
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchCoordinates();
+  };
 
   return (
-    <div className="container">
+    <div className="app-container">
       <h1>Weather App</h1>
-      <input
-        type="text"
-        placeholder="Search for a location..."
-        value={searchQuery}
-        onChange={handleSearch}
-      />
-          
-      <div className="weather-display-container">
-        {filteredLocations.length > 0 ? (
-          filteredLocations.map((location, index) => (
-            <WeatherDisplay key={index} location={location} />
-          ))
-        ) : (
-          <p>No locations found</p>
-        )}
-      </div>
+      <form onSubmit={handleSearch}>
+        <input 
+          type="text" 
+          value={city} 
+          onChange={(e) => setCity(e.target.value)} 
+          placeholder="Enter city name" 
+        />
+        <button type="submit">Search</button>
+      </form>
+      {weatherData && (
+        <WeatherDisplay weather={weatherData} />
+      )}
     </div>
   );
-};
+}
 
 export default App;
