@@ -13,7 +13,7 @@ function App() {
   };
 
   const fetchCoordinates = async () => {
-    const apiKey = 'c71a154bf14f4d20a37324749f120dd8'; 
+    const apiKey = 'add your api key'; 
     const response = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${city}&key=${apiKey}`);
     const data = await response.json();
     console.log(data);
